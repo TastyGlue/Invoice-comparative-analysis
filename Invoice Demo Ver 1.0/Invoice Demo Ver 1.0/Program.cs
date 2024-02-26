@@ -18,6 +18,8 @@ namespace Invoice_Demo_Ver_1._0
                 Write_Services.WriteExcelWorkbook();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Вашият обработен екселски файл е готов.");
+                Console.WriteLine("Може да натиснете ENTER за да затворите програмата.");
+                Console.ReadLine();
             }
             catch
             {
