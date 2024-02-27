@@ -3,6 +3,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -144,7 +145,7 @@ namespace Invoice_Demo_Ver_1._0.Services
 
                 if(Azhur_Services.Azhur_Data.Any(a => a.Id == document.Id && a.VAT_Base == document.VAT_Base))
                 {
-                    Color_Services.HighlightNRAObject(worksheet, row, 1);
+                    Color_Services.HighlightNRAObject(worksheet, row, 1, Color.Yellow);
                 }
                 row++;
             }
@@ -244,7 +245,7 @@ namespace Invoice_Demo_Ver_1._0.Services
 
                 if (Math.Abs(vatDifference) > 0.5M)
                 {
-                    Color_Services.HighlightCell(worksheet, row, 27);
+                    Color_Services.HighlightCell(worksheet, row, 27, Color.Yellow);
                 }
                 worksheet.Cells[row, 27].Value = vatDifference;
 

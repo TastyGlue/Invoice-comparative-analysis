@@ -11,6 +11,7 @@ namespace Invoice_Demo_Ver_1._0.Services
     public static class Azhur_Services
     {
         public static List<Azhur> Azhur_Data = new List<Azhur>();
+        public static List<List<string>> Invalid_Documents = new List<List<string>>();
         public static void GetTableData(ExcelWorksheet worksheet)
         {
             for (int row = 3; row <= worksheet.Dimension.End.Row; row++)
@@ -28,8 +29,13 @@ namespace Invoice_Demo_Ver_1._0.Services
             string Id = worksheet.Cells[row, 17].Value.ToString();
             string DocumentType = worksheet.Cells[row, 18].Value.ToString();
 
-            long DocumentNum = long.Parse(worksheet.Cells[row, 19].Value.ToString());
-
+            if (long.TryParse(worksheet.Cells[row, 19].Value.ToString(), out long DocumentNum)) { }
+            else
+            {
+                InvalidDocument(worksheet, row);
+                return;
+            }
+            
             DateTime date = DateTime.Parse(worksheet.Cells[row, 20].Value.ToString());
             DateOnly DocumentDate = DateOnly.FromDateTime(date);
 
@@ -67,6 +73,18 @@ namespace Invoice_Demo_Ver_1._0.Services
                 PrintObjectData(worksheet, document, row, 1);
                 row++;
             }
+        }
+
+        public static void InvalidDocument(ExcelWorksheet worksheet, int row)
+        {
+            List<string> invalidDocument = new List<string>();
+
+            for (int col = 17; col <= 25; col++)
+            {
+                invalidDocument.Add(worksheet.Cells[row, col].Value.ToString());
+            }
+
+            Invalid_Documents.Add(invalidDocument);
         }
 
         public static void PrintObjectData(ExcelWorksheet worksheet, Azhur document, int row, int col)
