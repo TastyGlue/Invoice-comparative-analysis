@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Invoice_Demo_Ver_1._0.Models;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,8 +20,9 @@ namespace Invoice_Demo_Ver_1._0.Services
                 MissingAzhurWorksheet(package);
                 WrongVATWorksheet(package);
                 CancelledDocumentsWorksheet(package);
+                AnulledDocumentsWorksheet(package);
 
-                File.WriteAllBytes(GetOutputFilePath(), package.GetAsByteArray());
+                File.WriteAllBytes(Read_Services.GetOutputFilePath(), package.GetAsByteArray());
             }
         }
 
@@ -63,46 +65,13 @@ namespace Invoice_Demo_Ver_1._0.Services
             NRA_Services.CancelledDocuments(cancelledDocuments);
         }
 
-        public static string GetOutputFilePath()
+        public static void AnulledDocumentsWorksheet(ExcelPackage package)
         {
-            string outputFilePath = Path.Combine(GetOutputDirectory(), GetOutputFileName());
-            return outputFilePath;
-        }
-
-        public static string GetOutputDirectory()
-        {
-            while (true)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Въведете директорията, в която искате да поставите обработения екселски файл:");
-                Console.ResetColor();
-                string? outputDirectory = Console.ReadLine();
-
-                if (outputDirectory != null)
-                {
-                    if (Directory.Exists(outputDirectory))
-                        return outputDirectory;
-
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"'{outputDirectory}' не е валидна директория.");
-                    }
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Опитайте отново.");
-                }
-            }
-        }
-
-        public static string GetOutputFileName()
-        {
-            string fileName = "Invoice Comparative Analysis";
-            string currentDate = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            
-            return $"{fileName} {currentDate}.xlsx";
+            ExcelWorksheet anulledDocuments = package.Workbook.Worksheets.Add("Анулирани");
+            NRA_Services.PrintHeader(anulledDocuments, 1);
+            Azhur_Services.PrintHeader(anulledDocuments, 17);
+            NRA_Services.AnulledDocuments(anulledDocuments);
+            Azhur_Services.AnulledDocuments(anulledDocuments);
         }
     }
 }

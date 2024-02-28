@@ -11,6 +11,7 @@ namespace Invoice_Demo_Ver_1._0.Services
     public static class Azhur_Services
     {
         public static List<Azhur> Azhur_Data = new List<Azhur>();
+        public static List<Azhur> anulledAzhur = new List<Azhur>();
         public static void GetTableData(ExcelWorksheet worksheet)
         {
             for (int row = 3; row <= worksheet.Dimension.End.Row; row++)
@@ -69,11 +70,29 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
             var missing = Azhur_Data.Where(a => !NRA_Services.NRA_Data.Any(n => n.DocumentNum == a.DocumentNum)).ToList();
 
+            var groupedByDocumentNum = missing.GroupBy(a => a.DocumentNum);
+            var actuallyMissing = new List<Azhur>();
+
             int row = 2;
             foreach (var document in missing)
             {
-                PrintObjectData(worksheet, document, row, 1);
-                row++;
+                if (missing.Any(n => n.DocumentNum == document.DocumentNum && n.TaxBase == document.TaxBase * -1M && n != document))
+                {
+                    anulledAzhur.Add(document);
+                }
+                else
+                {
+                    PrintObjectData(worksheet, document, row, 1);
+                    row++;
+                }
+            }
+        }
+
+        public static void AnulledDocuments(ExcelWorksheet worksheet)
+        {
+            for (int row = 2; row < anulledAzhur.Count + 2; row++)
+            {
+                PrintObjectData(worksheet, anulledAzhur[row - 2], row, 17);
             }
         }
 

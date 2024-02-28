@@ -14,7 +14,7 @@ namespace Invoice_Demo_Ver_1._0
             
             try
             {
-                ReadExcelWorksheet();
+                Read_Services.ReadExcelWorksheet();
                 Write_Services.WriteExcelWorkbook();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Вашият обработен екселски файл е готов.");
@@ -27,48 +27,6 @@ namespace Invoice_Demo_Ver_1._0
 
             Console.WriteLine("Може да натиснете ENTER за да затворите програмата.");
             Console.ReadLine();
-        }
-
-        public static string GetExcelFilePath()
-        {
-            while (true)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Въведете пълния адрес на екселския файл:");
-                Console.ResetColor();
-                string? filePath = Console.ReadLine();
-
-                if (filePath != null)
-                {
-                    if (File.Exists(filePath) && Path.GetExtension(filePath) == ".xlsx")
-                    {
-                        return filePath;
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"'{filePath}' не е валиден екселски файл.");
-                    }
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Опитайте отново.");
-                } 
-            }
-        }
-
-        public static void ReadExcelWorksheet()
-        {
-            string filePath = GetExcelFilePath();
-            FileInfo file = new FileInfo(filePath);
-            using (ExcelPackage package = new ExcelPackage(file))
-            {
-                ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
-
-                NRA_Services.GetTableData(worksheet);
-                Azhur_Services.GetTableData(worksheet);
-            }
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Invoice_Demo_Ver_1._0.Services
     public static class NRA_Services
     {
         public static List<NRA> NRA_Data = new List<NRA>();
+        public static List<NRA> anulledNRA = new List<NRA>();
         public static void GetTableData(ExcelWorksheet worksheet)
         {
             for (int row = 3; row <= worksheet.Dimension.End.Row; row++)
@@ -141,13 +142,20 @@ namespace Invoice_Demo_Ver_1._0.Services
             int row = 2;
             foreach (var document in missing)
             {
-                PrintObjectData(worksheet, document, row, 1);
-
-                if(Azhur_Services.Azhur_Data.Any(a => a.Id == document.Id && a.VAT_Base == document.VAT_Base))
+                if (document.TaxBase == 0M && document.VAT_Base == 0M && document.TaxBase20 == 0M && document.VAT_Base20 == 0M && document.TaxBase9 == 0M && document.VAT_Base9 == 0M && document.TaxBase0 == 0M)
                 {
-                    Color_Services.HighlightNRAObject(worksheet, row, 1, Color.Yellow);
+                    anulledNRA.Add(document);
                 }
-                row++;
+                else
+                {
+                    PrintObjectData(worksheet, document, row, 1);
+
+                    if (Azhur_Services.Azhur_Data.Any(a => a.Id == document.Id && a.VAT_Base == document.VAT_Base))
+                    {
+                        Color_Services.HighlightNRAObject(worksheet, row, 1, Color.Yellow);
+                    }
+                    row++;
+                }
             }
         }
         
@@ -255,6 +263,14 @@ namespace Invoice_Demo_Ver_1._0.Services
                     Azhur_Services.PrintObjectData(worksheet, document.Azhur_documents[azhurRow - row], azhurRow, 17);
                 }
                 row = row + document.Azhur_documents.Count();
+            }
+        }
+
+        public static void AnulledDocuments(ExcelWorksheet worksheet)
+        {
+            for (int row = 2; row < anulledNRA.Count + 2; row++)
+            {
+                PrintObjectData(worksheet, anulledNRA[row - 2], row, 1);
             }
         }
 
