@@ -45,27 +45,6 @@ namespace Invoice_Demo_Ver_1._0.Services
             ExcelWorksheet missingAzhur = package.Workbook.Worksheets.Add("Липсващи от Ажур");
             Azhur_Services.PrintHeader(missingAzhur, 1);
             Azhur_Services.Missing(missingAzhur);
-            WriteInvalidAzhurDocuments(missingAzhur);
-        }
-
-        public static void WriteInvalidAzhurDocuments(ExcelWorksheet worksheet)
-        {
-            int lastRow = worksheet.Dimension.End.Row;
-
-            foreach (var invalidDocument in Azhur_Services.Invalid_Documents)
-            {
-                int col = 1;
-                foreach (var property in invalidDocument)
-                {
-                    worksheet.Cells[lastRow + 1, col++].Value = property;
-                }
-                lastRow++;
-
-                if (NRA_Services.NRA_Data.Any(n => n.Id == invalidDocument[0] && n.VAT_Base == decimal.Parse(invalidDocument[7])))
-                {
-                    Color_Services.HighlightAzhurObject(worksheet, lastRow, 1, Color.Yellow);
-                } 
-            }
         }
 
         public static void WrongVATWorksheet(ExcelPackage package)

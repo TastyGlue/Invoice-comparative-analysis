@@ -12,7 +12,7 @@ namespace Invoice_Demo_Ver_1._0.Models
         public string Name { get; set; }
         public string Period { get; set; }
         public int DocumentType { get; set; }
-        public long DocumentNum { get; set; }
+        public string DocumentNum { get; set; }
         public DateOnly DocumentDate { get; set; }
         public string MerchType { get; set; }
         public Decimal TaxBase { get; set; }
@@ -26,7 +26,7 @@ namespace Invoice_Demo_Ver_1._0.Models
 
         
 
-        public NRA(string id, string name, string period, int documentType, long documentNum, DateOnly documentDate, string merchType, decimal taxBase, decimal vAT_Base, decimal taxBase20, decimal vAT_Base20, decimal taxBase9, decimal vAT_Base9, decimal taxBase0)
+        public NRA(string id, string name, string period, int documentType, string documentNum, DateOnly documentDate, string merchType, decimal taxBase, decimal vAT_Base, decimal taxBase20, decimal vAT_Base20, decimal taxBase9, decimal vAT_Base9, decimal taxBase0)
         {
             Id = id;
             Name = name;

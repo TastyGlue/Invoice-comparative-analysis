@@ -10,7 +10,7 @@ namespace Invoice_Demo_Ver_1._0.Models
     {
         public string Id { get; set; }
         public string DocumentType { get; set; }
-        public long DocumentNum { get; set; }
+        public string DocumentNum { get; set; }
         public DateOnly DocumentDate { get; set; }
         public string Name { get; set; }
         public Decimal NoTax { get; set; }
@@ -20,7 +20,7 @@ namespace Invoice_Demo_Ver_1._0.Models
 
         
 
-        public Azhur(string id, string documentType, long documentNum, DateOnly documentDate, string name, decimal noTax, decimal taxBase, decimal vAT_Base, string article)
+        public Azhur(string id, string documentType, string documentNum, DateOnly documentDate, string name, decimal noTax, decimal taxBase, decimal vAT_Base, string article)
         {
             Id = id;
             DocumentType = documentType;

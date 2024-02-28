@@ -37,7 +37,7 @@ namespace Invoice_Demo_Ver_1._0.Services
             int DocumentType = Convert.ToInt32(worksheet.Cells[row, 4].Value);
             if (DocumentType == 9)
                 return;
-            long DocumentNum = Convert.ToInt64(worksheet.Cells[row, 5].Value);
+            string DocumentNum = worksheet.Cells[row, 5].Value.ToString();
 
             DateTime date = DateTime.Parse(worksheet.Cells[row, 6].Value.ToString());
             DateOnly DocumentDate = DateOnly.FromDateTime(date);
