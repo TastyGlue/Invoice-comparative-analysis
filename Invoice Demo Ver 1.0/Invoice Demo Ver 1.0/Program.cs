@@ -19,10 +19,21 @@ namespace Invoice_Demo_Ver_1._0
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Вашият обработен екселски файл е готов.");
             }
-            catch
+            catch (NRAFormatException ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Нещо се обърка");
+                Console.WriteLine(ex.Message);
+            }
+            catch (AzhurFormatException ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Нещо се обърка.");
+                Console.WriteLine($"Грешка: '{ex.Message}'");
             }
 
             Console.WriteLine("Може да натиснете ENTER за да затворите програмата.");
