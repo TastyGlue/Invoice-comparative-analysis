@@ -31,30 +31,39 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
 #pragma warning disable CS8604
 #pragma warning disable CS8600
-            string Id = worksheet.Cells[row, 1].Value.ToString();
-            string Name = worksheet.Cells[row, 2].Value.ToString();
-            string Period = worksheet.Cells[row, 3].Value.ToString();
+            try
+            {
+                string Id = worksheet.Cells[row, 1].Value.ToString();
+                string Name = worksheet.Cells[row, 2].Value.ToString();
+                string Period = worksheet.Cells[row, 3].Value.ToString();
 
-            int DocumentType = Convert.ToInt32(worksheet.Cells[row, 4].Value);
-            if (DocumentType == 9)
-                return;
-            string DocumentNum = worksheet.Cells[row, 5].Value.ToString();
+                int DocumentType = Convert.ToInt32(worksheet.Cells[row, 4].Value);
+                if (DocumentType == 9)
+                    return;
+                string DocumentNum = worksheet.Cells[row, 5].Value.ToString();
 
-            DateTime date = DateTime.Parse(worksheet.Cells[row, 6].Value.ToString());
-            DateOnly DocumentDate = DateOnly.FromDateTime(date);
+                DateTime date = DateTime.Parse(worksheet.Cells[row, 6].Value.ToString());
+                DateOnly DocumentDate = DateOnly.FromDateTime(date);
 
-            string MerchType = worksheet.Cells[row, 7].Value.ToString();
+                string MerchType = worksheet.Cells[row, 7].Value.ToString();
 
-            Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 8].Value.ToString());
-            Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 9].Value.ToString());
-            Decimal TaxBase20 = Decimal.Parse(worksheet.Cells[row, 10].Value.ToString());
-            Decimal VAT_Base20 = Decimal.Parse(worksheet.Cells[row, 11].Value.ToString());
-            Decimal TaxBase9 = Decimal.Parse(worksheet.Cells[row, 12].Value.ToString());
-            Decimal VAT_Base9 = Decimal.Parse(worksheet.Cells[row, 13].Value.ToString());
-            Decimal TaxBase0 = Decimal.Parse(worksheet.Cells[row, 14].Value.ToString());
+                Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 8].Value.ToString());
+                Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 9].Value.ToString());
+                Decimal TaxBase20 = Decimal.Parse(worksheet.Cells[row, 10].Value.ToString());
+                Decimal VAT_Base20 = Decimal.Parse(worksheet.Cells[row, 11].Value.ToString());
+                Decimal TaxBase9 = Decimal.Parse(worksheet.Cells[row, 12].Value.ToString());
+                Decimal VAT_Base9 = Decimal.Parse(worksheet.Cells[row, 13].Value.ToString());
+                Decimal TaxBase0 = Decimal.Parse(worksheet.Cells[row, 14].Value.ToString());
 
 
-            NRA_Data.Add(new NRA(Id, Name, Period, DocumentType, DocumentNum, DocumentDate, MerchType, TaxBase, VAT_Base, TaxBase20, VAT_Base20, TaxBase9, VAT_Base9, TaxBase0));
+                NRA_Data.Add(new NRA(Id, Name, Period, DocumentType, DocumentNum, DocumentDate, MerchType, TaxBase, VAT_Base, TaxBase20, VAT_Base20, TaxBase9, VAT_Base9, TaxBase0));
+            }
+            catch (Exception ex)
+            {
+                string errorMessageToShow = $"Грешка при форматирането на НАП документ (ред: {row})";
+                errorMessageToShow = errorMessageToShow + $"\n{ex.Message}";
+                throw new NRAFormatException(errorMessageToShow);
+            }
 #pragma warning restore CS8604
 #pragma warning restore CS8600
         }

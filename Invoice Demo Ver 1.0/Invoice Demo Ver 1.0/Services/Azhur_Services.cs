@@ -26,31 +26,40 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
 #pragma warning disable CS8604
 #pragma warning disable CS8600
-            string Id = worksheet.Cells[row, 17].Value.ToString();
-            string DocumentType = worksheet.Cells[row, 18].Value.ToString();
-
-            string DocumentNum;
-            if (long.TryParse(worksheet.Cells[row, 19].Value.ToString(), out long correctlyParsed)) 
+            try
             {
-                DocumentNum = correctlyParsed.ToString();
+                string Id = worksheet.Cells[row, 17].Value.ToString();
+                string DocumentType = worksheet.Cells[row, 18].Value.ToString();
+
+                string DocumentNum;
+                if (long.TryParse(worksheet.Cells[row, 19].Value.ToString(), out long correctlyParsed))
+                {
+                    DocumentNum = correctlyParsed.ToString();
+                }
+                else
+                {
+                    DocumentNum = worksheet.Cells[row, 19].Value.ToString();
+                }
+
+                DateTime date = DateTime.Parse(worksheet.Cells[row, 20].Value.ToString());
+                DateOnly DocumentDate = DateOnly.FromDateTime(date);
+
+                string Name = worksheet.Cells[row, 21].Value.ToString();
+
+                Decimal NoTax = Decimal.Parse(worksheet.Cells[row, 22].Value.ToString());
+                Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 23].Value.ToString());
+                Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 24].Value.ToString());
+
+                string Article = worksheet.Cells[row, 25].Value.ToString();
+
+                Azhur_Data.Add(new Azhur(Id, DocumentType, DocumentNum, DocumentDate, Name, NoTax, TaxBase, VAT_Base, Article));
             }
-            else
+            catch (Exception ex)
             {
-                DocumentNum = worksheet.Cells[row, 19].Value.ToString();
+                string errorMessageToShow = $"Грешка при форматирането на Ажур документ (ред: {row})";
+                errorMessageToShow = errorMessageToShow + $"\n{ex.Message}";
+                throw new AzhurFormatException(errorMessageToShow);
             }
-            
-            DateTime date = DateTime.Parse(worksheet.Cells[row, 20].Value.ToString());
-            DateOnly DocumentDate = DateOnly.FromDateTime(date);
-
-            string Name = worksheet.Cells[row, 21].Value.ToString();
-
-            Decimal NoTax = Decimal.Parse(worksheet.Cells[row, 22].Value.ToString());
-            Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 23].Value.ToString());
-            Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 24].Value.ToString());
-            
-            string Article = worksheet.Cells[row, 25].Value.ToString();
-
-            Azhur_Data.Add(new Azhur(Id, DocumentType, DocumentNum, DocumentDate, Name, NoTax, TaxBase, VAT_Base, Article));
 #pragma warning restore CS8604
 #pragma warning restore CS8600
         }
