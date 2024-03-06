@@ -12,32 +12,44 @@ namespace Invoice_Demo_Ver_1._0
             Console.InputEncoding = System.Text.Encoding.Unicode;
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             
-            try
+            while (true)
             {
-                Read_Services.ReadExcelWorksheet();
-                Write_Services.WriteExcelWorkbook();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Вашият обработен екселски файл е готов.");
-            }
-            catch (NRAFormatException ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-            }
-            catch (AzhurFormatException ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Нещо се обърка.");
-                Console.WriteLine($"Грешка: '{ex.Message}'");
-            }
+                try
+                {
+                    Read_Services.ReadExcelWorksheet();
+                    Write_Services.WriteExcelWorkbook();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Вашият обработен екселски файл е готов.");
+                }
+                catch (NRAFormatException ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message);
+                }
+                catch (AzhurFormatException ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(ex.Message);
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Нещо се обърка.");
+                    Console.WriteLine($"Грешка: '{ex.Message}'");
+                }
 
-            Console.WriteLine("Може да натиснете ENTER за да затворите програмата.");
-            Console.ReadLine();
+                bool isEnd = Read_Services.UserInputMainLoop();
+                if (isEnd)
+                    break;
+                else
+                {
+                    NRA_Services.NRA_Data.Clear();
+                    NRA_Services.anulledNRA.Clear();
+
+                    Azhur_Services.Azhur_Data.Clear();
+                    Azhur_Services.anulledAzhur.Clear();
+                }
+            }
         }
     }
 }
