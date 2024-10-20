@@ -10,8 +10,9 @@ namespace Invoice_Demo_Ver_1._0.Services
 {
     public static class Azhur_Services
     {
-        public static List<Azhur> Azhur_Data = new List<Azhur>();
-        public static List<Azhur> anulledAzhur = new List<Azhur>();
+        public static List<Azhur> Azhur_Data = [];
+        public static List<Azhur> anulledAzhur = [];
+
         public static void GetTableData(ExcelWorksheet worksheet)
         {
             for (int row = 3; row <= worksheet.Dimension.End.Row; row++)
@@ -57,7 +58,7 @@ namespace Invoice_Demo_Ver_1._0.Services
             catch (Exception ex)
             {
                 string errorMessageToShow = $"Грешка при форматирането на Ажур документ (ред: {row})";
-                errorMessageToShow = errorMessageToShow + $"\n{ex.Message}";
+                errorMessageToShow += $"\n{ex.Message}";
                 throw new AzhurFormatException(errorMessageToShow);
             }
 #pragma warning restore CS8604
@@ -77,7 +78,7 @@ namespace Invoice_Demo_Ver_1._0.Services
 
         public static void Missing(ExcelWorksheet worksheet)
         {
-            var missing = Azhur_Data.Where(a => !NRA_Services.NRA_Data.Any(n => n.DocumentNum == a.DocumentNum)).ToList();
+            var missing = Azhur_Data.Where(a => !NRA_Services.NRA_Data.Any(n => (n.DocumentNum == a.DocumentNum) && (n.Id == a.Id))).ToList();
 
             var groupedByDocumentNum = missing.GroupBy(a => a.DocumentNum);
             var actuallyMissing = new List<Azhur>();

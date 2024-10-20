@@ -61,7 +61,7 @@ namespace Invoice_Demo_Ver_1._0.Services
             catch (Exception ex)
             {
                 string errorMessageToShow = $"Грешка при форматирането на НАП документ (ред: {row})";
-                errorMessageToShow = errorMessageToShow + $"\n{ex.Message}";
+                errorMessageToShow += $"\n{ex.Message}";
                 throw new NRAFormatException(errorMessageToShow);
             }
 #pragma warning restore CS8604
@@ -146,7 +146,7 @@ namespace Invoice_Demo_Ver_1._0.Services
 
         public static void Missing(ExcelWorksheet worksheet)
         {
-            var missing = NRA_Data.Where(n => !Azhur_Services.Azhur_Data.Any(a => a.DocumentNum == n.DocumentNum)).ToList();
+            var missing = NRA_Data.Where(n => !Azhur_Services.Azhur_Data.Any(a => (a.DocumentNum == n.DocumentNum) && (a.Id == n.Id))).ToList();
 
             int row = 2;
             foreach (var document in missing)
@@ -229,7 +229,7 @@ namespace Invoice_Demo_Ver_1._0.Services
                     {
                         PrintObjectData(worksheet, document.NRA_documents[nraRow - row], nraRow, 1);
                     }
-                    row = row + document.NRA_documents.Count();
+                    row += document.NRA_documents.Count;
                 }
             }
         }
@@ -271,7 +271,7 @@ namespace Invoice_Demo_Ver_1._0.Services
                 {
                     Azhur_Services.PrintObjectData(worksheet, document.Azhur_documents[azhurRow - row], azhurRow, 17);
                 }
-                row = row + document.Azhur_documents.Count();
+                row += document.Azhur_documents.Count;
             }
         }
 
