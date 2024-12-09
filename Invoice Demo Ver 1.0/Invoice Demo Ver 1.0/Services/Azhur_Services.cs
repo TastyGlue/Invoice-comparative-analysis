@@ -15,9 +15,9 @@ namespace Invoice_Demo_Ver_1._0.Services
 
         public static void GetTableData(ExcelWorksheet worksheet)
         {
-            for (int row = 3; row <= worksheet.Dimension.End.Row; row++)
+            for (int row = 13; row <= worksheet.Dimension.End.Row; row++)
             {
-                if (worksheet.Cells[row, 17].Value == null)
+                if (worksheet.Cells[row, 10].Value == null)
                     break;
                 HandleObjectData(worksheet, row);
             }
@@ -29,29 +29,20 @@ namespace Invoice_Demo_Ver_1._0.Services
 #pragma warning disable CS8600
             try
             {
-                string Id = worksheet.Cells[row, 17].Value.ToString();
-                string DocumentType = worksheet.Cells[row, 18].Value.ToString();
+                string Id = worksheet.Cells[row, 10].Value.ToString();
+                string DocumentType = worksheet.Cells[row, 11].Value.ToString();
+                string DocumentNum = worksheet.Cells[row, 12].Value.ToString();
 
-                string DocumentNum;
-                if (long.TryParse(worksheet.Cells[row, 19].Value.ToString(), out long correctlyParsed))
-                {
-                    DocumentNum = correctlyParsed.ToString();
-                }
-                else
-                {
-                    DocumentNum = worksheet.Cells[row, 19].Value.ToString();
-                }
-
-                DateTime date = DateTime.Parse(worksheet.Cells[row, 20].Value.ToString());
+                DateTime date = DateTime.Parse(worksheet.Cells[row, 13].Value.ToString());
                 DateOnly DocumentDate = DateOnly.FromDateTime(date);
 
-                string Name = worksheet.Cells[row, 21].Value.ToString();
+                string Name = worksheet.Cells[row, 14].Value.ToString();
 
-                Decimal NoTax = Decimal.Parse(worksheet.Cells[row, 22].Value.ToString());
-                Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 23].Value.ToString());
-                Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 24].Value.ToString());
+                Decimal NoTax = Decimal.Parse(worksheet.Cells[row, 15].Value.ToString());
+                Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 16].Value.ToString());
+                Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 17].Value.ToString());
 
-                string Article = worksheet.Cells[row, 25].Value.ToString();
+                string Article = worksheet.Cells[row, 18].Value.ToString();
 
                 Azhur_Data.Add(new Azhur(Id, DocumentType, DocumentNum, DocumentDate, Name, NoTax, TaxBase, VAT_Base, Article));
             }
@@ -71,7 +62,7 @@ namespace Invoice_Demo_Ver_1._0.Services
 
             foreach (var AzhurObject in Azhur_Data)
             {
-                PrintObjectData(worksheet, AzhurObject, row, 17);
+                PrintObjectData(worksheet, AzhurObject, row, 10);
                 row++;
             }
         }
@@ -102,7 +93,7 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
             for (int row = 2; row < anulledAzhur.Count + 2; row++)
             {
-                PrintObjectData(worksheet, anulledAzhur[row - 2], row, 17);
+                PrintObjectData(worksheet, anulledAzhur[row - 2], row, 10);
             }
         }
 
@@ -115,7 +106,7 @@ namespace Invoice_Demo_Ver_1._0.Services
             worksheet.Cells[row, col++].Value = document.Name;
             worksheet.Cells[row, col++].Value = document.NoTax;
             worksheet.Cells[row, col++].Value = document.TaxBase;
-            worksheet.Cells[row, col++].Value = document.VAT_Base;
+            worksheet.Cells[row, col++].Value = document.VatBase;
             worksheet.Cells[row, col++].Value = document.Article;
         }
 

@@ -19,7 +19,7 @@ namespace Invoice_Demo_Ver_1._0.Services
         public static List<NRA> anulledNRA = new List<NRA>();
         public static void GetTableData(ExcelWorksheet worksheet)
         {
-            for (int row = 3; row <= worksheet.Dimension.End.Row; row++)
+            for (int row = 13; row <= worksheet.Dimension.End.Row; row++)
             {
                 if (worksheet.Cells[row, 1].Value == null)
                     break;
@@ -33,14 +33,16 @@ namespace Invoice_Demo_Ver_1._0.Services
 #pragma warning disable CS8600
             try
             {
-                string Id = worksheet.Cells[row, 1].Value.ToString();
+                string Id = "BG" + worksheet.Cells[row, 1].Value.ToString();
                 string Name = worksheet.Cells[row, 2].Value.ToString();
                 string Period = worksheet.Cells[row, 3].Value.ToString();
 
-                int DocumentType = Convert.ToInt32(worksheet.Cells[row, 4].Value);
+                string DocumentNum = worksheet.Cells[row, 4].Value.ToString();
+                DocumentNum = (DocumentNum?.Length < 10) ? DocumentNum.PadLeft(10, '0') : DocumentNum;
+
+                int DocumentType = int.Parse(worksheet.Cells[row, 5].Value.ToString()?.Substring(0, 2));
                 if (DocumentType == 9)
                     return;
-                string DocumentNum = worksheet.Cells[row, 5].Value.ToString();
 
                 DateTime date = DateTime.Parse(worksheet.Cells[row, 6].Value.ToString());
                 DateOnly DocumentDate = DateOnly.FromDateTime(date);
@@ -49,14 +51,9 @@ namespace Invoice_Demo_Ver_1._0.Services
 
                 Decimal TaxBase = Decimal.Parse(worksheet.Cells[row, 8].Value.ToString());
                 Decimal VAT_Base = Decimal.Parse(worksheet.Cells[row, 9].Value.ToString());
-                Decimal TaxBase20 = Decimal.Parse(worksheet.Cells[row, 10].Value.ToString());
-                Decimal VAT_Base20 = Decimal.Parse(worksheet.Cells[row, 11].Value.ToString());
-                Decimal TaxBase9 = Decimal.Parse(worksheet.Cells[row, 12].Value.ToString());
-                Decimal VAT_Base9 = Decimal.Parse(worksheet.Cells[row, 13].Value.ToString());
-                Decimal TaxBase0 = Decimal.Parse(worksheet.Cells[row, 14].Value.ToString());
 
 
-                NRA_Data.Add(new NRA(Id, Name, Period, DocumentType, DocumentNum, DocumentDate, MerchType, TaxBase, VAT_Base, TaxBase20, VAT_Base20, TaxBase9, VAT_Base9, TaxBase0));
+                NRA_Data.Add(new NRA(Id, Name, Period, DocumentType, DocumentNum, DocumentDate, MerchType, TaxBase, VAT_Base));
             }
             catch (Exception ex)
             {
@@ -84,21 +81,16 @@ namespace Invoice_Demo_Ver_1._0.Services
 
         public static void FixCreditSigns()
         {
-            foreach (var document in NRA_Data.Where(x => x.TaxBase < 0))
+            foreach (var document in NRA_Data.Where(x => x.DocumentType == 3))
             {
-                if (document.VAT_Base > 0)
+                if (document.TaxBase > 0)
                 {
-                    document.VAT_Base = document.VAT_Base * -1;
+                    document.TaxBase *= -1;
                 }
 
-                if (document.VAT_Base20 > 0)
+                if (document.VatBase > 0)
                 {
-                    document.VAT_Base20 = document.VAT_Base20 * -1;
-                }
-
-                if (document.VAT_Base9 > 0)
-                {
-                    document.VAT_Base9 = document.VAT_Base9 * -1;
+                    document.VatBase *= -1;
                 }
             }
         }
@@ -109,37 +101,12 @@ namespace Invoice_Demo_Ver_1._0.Services
             {
                 if (document.TaxBase < 0)
                 {
-                    document.TaxBase = document.TaxBase * -1;
+                    document.TaxBase *= -1;
                 }
 
-                if (document.VAT_Base < 0)
+                if (document.VatBase < 0)
                 {
-                    document.VAT_Base = document.VAT_Base * -1;
-                }
-
-                if (document.TaxBase20 < 0)
-                {
-                    document.TaxBase20 = document.TaxBase20 * -1;
-                }
-
-                if (document.VAT_Base20 < 0)
-                {
-                    document.VAT_Base20 = document.VAT_Base20 * -1;
-                }
-
-                if (document.TaxBase9 < 0)
-                {
-                    document.TaxBase9 = document.TaxBase9 * -1;
-                }
-
-                if (document.VAT_Base9 < 0)
-                {
-                    document.VAT_Base9 = document.VAT_Base9 * -1;
-                }
-
-                if (document.TaxBase0 < 0)
-                {
-                    document.TaxBase0 = document.TaxBase0 * -1;
+                    document.VatBase *= -1;
                 }
             }
         }
@@ -151,7 +118,7 @@ namespace Invoice_Demo_Ver_1._0.Services
             int row = 2;
             foreach (var document in missing)
             {
-                if (document.TaxBase == 0M && document.VAT_Base == 0M && document.TaxBase20 == 0M && document.VAT_Base20 == 0M && document.TaxBase9 == 0M && document.VAT_Base9 == 0M && document.TaxBase0 == 0M)
+                if (document.TaxBase == 0M && document.VatBase == 0M)
                 {
                     anulledNRA.Add(document);
                 }
@@ -159,7 +126,7 @@ namespace Invoice_Demo_Ver_1._0.Services
                 {
                     PrintObjectData(worksheet, document, row, 1);
 
-                    if (Azhur_Services.Azhur_Data.Any(a => a.Id == document.Id && a.VAT_Base == document.VAT_Base))
+                    if (Azhur_Services.Azhur_Data.Any(a => a.Id == document.Id && a.VatBase == document.VatBase))
                     {
                         Color_Services.HighlightNRAObject(worksheet, row, 1, Color.Yellow);
                     }
@@ -188,16 +155,16 @@ namespace Invoice_Demo_Ver_1._0.Services
                     .ToList();
 
             int row = 2;
-            worksheet.Cells[1, 27].Value = "Разлика в ДДС";
+            worksheet.Cells[1, 20].Value = "Разлика в ДДС";
 
             foreach (var document in matchingDocuments)
             {
-                if (Math.Abs(document.NRA_document.VAT_Base - document.Azhur_documents.First().VAT_Base) > 0.5M &&
-                        document.Azhur_documents.First().VAT_Base != 0M)
+                if (Math.Abs(document.NRA_document.VatBase - document.Azhur_documents.First().VatBase) > 0.5M &&
+                        document.Azhur_documents.First().VatBase != 0M)
                 {
                     PrintObjectData(worksheet, document.NRA_document, row, 1);
-                    Azhur_Services.PrintObjectData(worksheet, document.Azhur_documents.First(), row, 17);
-                    worksheet.Cells[row, 27].Value = document.NRA_document.VAT_Base - document.Azhur_documents.First().VAT_Base;
+                    Azhur_Services.PrintObjectData(worksheet, document.Azhur_documents.First(), row, 10);
+                    worksheet.Cells[row, 20].Value = document.NRA_document.VatBase - document.Azhur_documents.First().VatBase;
                     row++;
                 }
             }
@@ -221,11 +188,11 @@ namespace Invoice_Demo_Ver_1._0.Services
 
             foreach (var document in doubledDocuments)
             {
-                var sumOfDoubledNRA = document.NRA_documents.Sum(n => n.VAT_Base);
-                if (Math.Abs(document.Azhur_document.VAT_Base - sumOfDoubledNRA) > 0.5M)
+                var sumOfDoubledNRA = document.NRA_documents.Sum(n => n.VatBase);
+                if (Math.Abs(document.Azhur_document.VatBase - sumOfDoubledNRA) > 0.5M)
                 {
-                    Azhur_Services.PrintObjectData(worksheet, document.Azhur_document, row, 17);
-                    for (int nraRow = row; nraRow < document.NRA_documents.Count() + row; nraRow++)
+                    Azhur_Services.PrintObjectData(worksheet, document.Azhur_document, row, 10);
+                    for (int nraRow = row; nraRow < document.NRA_documents.Count + row; nraRow++)
                     {
                         PrintObjectData(worksheet, document.NRA_documents[nraRow - row], nraRow, 1);
                     }
@@ -253,23 +220,23 @@ namespace Invoice_Demo_Ver_1._0.Services
                     .ToList();
 
             int row = 2;
-            worksheet.Cells[1, 27].Value = "Разлика в ДДС";
+            worksheet.Cells[1, 20].Value = "Разлика в ДДС";
 
             foreach (var document in cancelledDocuments)
             {
-                var vatSumOfCancelled = document.Azhur_documents.Sum(a => a.VAT_Base);
-                var vatDifference = document.NRA_document.VAT_Base - vatSumOfCancelled;
+                var vatSumOfCancelled = document.Azhur_documents.Sum(a => a.VatBase);
+                var vatDifference = document.NRA_document.VatBase - vatSumOfCancelled;
 
                 if (Math.Abs(vatDifference) > 0.5M)
                 {
-                    Color_Services.HighlightCell(worksheet, row, 27, Color.Yellow);
+                    Color_Services.HighlightCell(worksheet, row, 20, Color.Yellow);
                 }
-                worksheet.Cells[row, 27].Value = vatDifference;
+                worksheet.Cells[row, 20].Value = vatDifference;
 
                 PrintObjectData(worksheet, document.NRA_document, row, 1);
-                for (int azhurRow = row; azhurRow < document.Azhur_documents.Count() + row; azhurRow++)
+                for (int azhurRow = row; azhurRow < document.Azhur_documents.Count + row; azhurRow++)
                 {
-                    Azhur_Services.PrintObjectData(worksheet, document.Azhur_documents[azhurRow - row], azhurRow, 17);
+                    Azhur_Services.PrintObjectData(worksheet, document.Azhur_documents[azhurRow - row], azhurRow, 10);
                 }
                 row += document.Azhur_documents.Count;
             }
@@ -288,37 +255,25 @@ namespace Invoice_Demo_Ver_1._0.Services
             worksheet.Cells[row, col++].Value = document.Id;
             worksheet.Cells[row, col++].Value = document.Name;
             worksheet.Cells[row, col++].Value = document.Period;
-            worksheet.Cells[row, col++].Value = document.DocumentType;
             worksheet.Cells[row, col++].Value = document.DocumentNum;
+            worksheet.Cells[row, col++].Value = document.DocumentType;
             worksheet.Cells[row, col++].Value = document.DocumentDate;
             worksheet.Cells[row, col++].Value = document.MerchType;
             worksheet.Cells[row, col++].Value = document.TaxBase;
-            worksheet.Cells[row, col++].Value = document.VAT_Base;
-            worksheet.Cells[row, col++].Value = document.TaxBase20;
-            worksheet.Cells[row, col++].Value = document.VAT_Base20;
-            worksheet.Cells[row, col++].Value = document.TaxBase9;
-            worksheet.Cells[row, col++].Value = document.VAT_Base9;
-            worksheet.Cells[row, col++].Value = document.TaxBase0;
-            worksheet.Cells[row, col++].Value = document.VAT_Base0;
+            worksheet.Cells[row, col++].Value = document.VatBase;
         }
 
         public static void PrintHeader(ExcelWorksheet worksheet, int col)
         {
-            worksheet.Cells[1, col++].Value = "Идентификационен номер на контрагента";
-            worksheet.Cells[1, col++].Value = "Име на контрагента";
-            worksheet.Cells[1, col++].Value = "Данъчен период";
-            worksheet.Cells[1, col++].Value = "Вид на документа";
-            worksheet.Cells[1, col++].Value = "Номер на документа";
-            worksheet.Cells[1, col++].Value = "Дата на документа";
-            worksheet.Cells[1, col++].Value = "Вид на стоката или обхват и вид на услугата";
-            worksheet.Cells[1, col++].Value = "Общ размер на данъчните основи за облагане с ДДС";
-            worksheet.Cells[1, col++].Value = "Всичко начислен ДДС";
-            worksheet.Cells[1, col++].Value = "Данъчна основа на облагаемите доставки със ставка 20 %, вкл, доставките при условията на дистанционни продажби, с място на изпълнение на територията на страната";
-            worksheet.Cells[1, col++].Value = "Начислен ДДС 20 %";
-            worksheet.Cells[1, col++].Value = "ДО на облагаемите доставки съсставка 9 %";
-            worksheet.Cells[1, col++].Value = "Начислен ДДС 9 %";
-            worksheet.Cells[1, col++].Value = "ДО на доставките със ставка 0 % по глава трета от ЗДДС";
-            worksheet.Cells[1, col++].Value = "ДО на освободени доставки и освободените ВОП";
+            worksheet.Cells[1, col++].Value = "Идент. № на доставчика ВИН";
+            worksheet.Cells[1, col++].Value = "Наименование на доставчика";
+            worksheet.Cells[1, col++].Value = "Период";
+            worksheet.Cells[1, col++].Value = "№ на документ";
+            worksheet.Cells[1, col++].Value = "Тип на документ";
+            worksheet.Cells[1, col++].Value = "Дата на издаване";
+            worksheet.Cells[1, col++].Value = "Предмет на доставка";
+            worksheet.Cells[1, col++].Value = "0210: Сума на ДО";
+            worksheet.Cells[1, col++].Value = "0220: Начислен ДДС";
         }
     }
 }

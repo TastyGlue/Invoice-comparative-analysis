@@ -31,7 +31,7 @@ namespace Invoice_Demo_Ver_1._0.Services
             ExcelWorksheet original_Worksheet = package.Workbook.Worksheets.Add("Оригинална таблица");
             NRA_Services.PrintHeader(original_Worksheet, 1);
             NRA_Services.WriteNRATable(original_Worksheet);
-            Azhur_Services.PrintHeader(original_Worksheet, 17);
+            Azhur_Services.PrintHeader(original_Worksheet, 10);
             Azhur_Services.WriteAzhurTable(original_Worksheet);
         }
 
@@ -53,7 +53,7 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
             ExcelWorksheet wrongVAT = package.Workbook.Worksheets.Add("Грешно ДДС");
             NRA_Services.PrintHeader(wrongVAT, 1);
-            Azhur_Services.PrintHeader(wrongVAT, 17);
+            Azhur_Services.PrintHeader(wrongVAT, 10);
             NRA_Services.WrongVAT(wrongVAT);
         }
 
@@ -61,7 +61,7 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
             ExcelWorksheet cancelledDocuments = package.Workbook.Worksheets.Add("Сторнирани");
             NRA_Services.PrintHeader(cancelledDocuments, 1);
-            Azhur_Services.PrintHeader(cancelledDocuments, 17);
+            Azhur_Services.PrintHeader(cancelledDocuments, 10);
             NRA_Services.CancelledDocuments(cancelledDocuments);
         }
 
@@ -69,7 +69,7 @@ namespace Invoice_Demo_Ver_1._0.Services
         {
             ExcelWorksheet anulledDocuments = package.Workbook.Worksheets.Add("Анулирани");
             NRA_Services.PrintHeader(anulledDocuments, 1);
-            Azhur_Services.PrintHeader(anulledDocuments, 17);
+            Azhur_Services.PrintHeader(anulledDocuments, 10);
             NRA_Services.AnulledDocuments(anulledDocuments);
             Azhur_Services.AnulledDocuments(anulledDocuments);
         }

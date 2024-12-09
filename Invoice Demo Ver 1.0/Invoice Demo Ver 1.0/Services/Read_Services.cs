@@ -41,8 +41,8 @@ namespace Invoice_Demo_Ver_1._0.Services
         public static void ReadExcelWorksheet()
         {
             string filePath = GetInputFileName();
-            FileInfo file = new FileInfo(filePath);
-            using (ExcelPackage package = new ExcelPackage(file))
+            FileInfo file = new(filePath);
+            using (ExcelPackage package = new(file))
             {
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
 

@@ -15,7 +15,7 @@ namespace Invoice_Demo_Ver_1._0.Models
         public string Name { get; set; }
         public Decimal NoTax { get; set; }
         public Decimal TaxBase { get; set; }
-        public Decimal VAT_Base { get; set; }
+        public Decimal VatBase { get; set; }
         public string Article {get; set; }
 
         
@@ -29,7 +29,7 @@ namespace Invoice_Demo_Ver_1._0.Models
             Name = name;
             NoTax = noTax;
             TaxBase = taxBase;
-            VAT_Base = vAT_Base;
+            VatBase = vAT_Base;
             Article = article;
         }
     }
